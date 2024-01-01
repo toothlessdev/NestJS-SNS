@@ -1,104 +1,95 @@
 import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  NotFoundException,
-  Param,
+    Controller,
+    Get,
+    Post,
+    Body,
+    Param,
+    Put,
+    Delete,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
 // nest g resource : 원하는 이름의 모듈 생성가능
 
 interface PostModel {
-  id: number;
-  author: string;
-  title: string;
-  content: string;
-  likeCount: number;
-  commentCount: number;
+    id: number;
+    author: string;
+    title: string;
+    content: string;
+    likeCount: number;
+    commentCount: number;
 }
 
 let posts: PostModel[] = [
-  {
-    id: 1,
-    author: "author1",
-    title: "title1",
-    content: "content1",
-    likeCount: 10,
-    commentCount: 10,
-  },
-  {
-    id: 2,
-    author: "author2",
-    title: "title2",
-    content: "content2",
-    likeCount: 10,
-    commentCount: 10,
-  },
-  {
-    id: 3,
-    author: "author3",
-    title: "title3",
-    content: "content3",
-    likeCount: 10,
-    commentCount: 10,
-  },
+    {
+        id: 1,
+        author: "author1",
+        title: "title1",
+        content: "content1",
+        likeCount: 10,
+        commentCount: 10,
+    },
+    {
+        id: 2,
+        author: "author2",
+        title: "title2",
+        content: "content2",
+        likeCount: 10,
+        commentCount: 10,
+    },
+    {
+        id: 3,
+        author: "author3",
+        title: "title3",
+        content: "content3",
+        likeCount: 10,
+        commentCount: 10,
+    },
 ];
 
 @Controller("posts")
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+    constructor(private readonly postsService: PostsService) {}
 
-  /**
-   * GET /posts
-   * 모든 post 를 가져온다
-   */
-  @Get()
-  public getPosts() {
-    return posts;
-  }
+    @Get()
+    public readAllPosts() {
+        return this.postsService.readAllPosts();
+    }
 
-  /**
-   * GET /posts/:id
-   * id 에 해당하는 post 를 가져온다
-   */
-  @Get("/:id")
-  public getPost(@Param("id") id: string) {
-    const post = posts.find((post) => post.id === parseInt(id));
-    if (!post) throw new NotFoundException();
-    return post;
-  }
+    @Get(":id")
+    public readPostById(@Param("id") id: string) {
+        return this.postsService.readPostById(Number(id));
+    }
 
-  /**
-   * POST /posts
-   * post 를 생성
-   */
-  @Post()
-  public postPost(
-    @Body("author") author: string,
-    @Body("title") title: string,
-    @Body("content") content: string,
-  ) {
-    const post = {
-      id: posts[posts.length - 1].id + 1,
-      author,
-      title,
-      content,
-      likeCount: 0,
-      commentCount: 0,
-    };
+    @Post()
+    public createPost(
+        @Body("author") author: string,
+        @Body("title") title: string,
+        @Body("content") content: string,
+    ) {
+        return this.postsService.createPost(author, title, content);
+    }
 
-    posts = [...posts, post];
-    return post;
-  }
+    @Put()
+    public updatePost(
+        @Body("id") id: number,
+        @Body("author") author: string,
+        @Body("title") title: string,
+        @Body("content") content: string,
+        @Body("likeCount") likeCount: number,
+        @Body("commentCount") commentCount: number,
+    ) {
+        return this.postsService.updatePost(
+            id,
+            author,
+            title,
+            content,
+            likeCount,
+            commentCount,
+        );
+    }
 
-  /**
-   * PUT /posts/:id
-   * id 에 해당하는 post 변경
-   */
-
-  /**
-   * DELETE /posts/:id
-   * id 에 해당하는 post 삭제
-   */
+    @Delete(":id")
+    public deletePost(@Param("id") id: number) {
+        return this.postsService.deletePost(id);
+    }
 }

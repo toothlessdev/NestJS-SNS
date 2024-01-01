@@ -4,6 +4,7 @@ import { AppService } from "./app.service";
 import { PostsModule } from "./posts/posts.module";
 
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { PostsModel } from "./posts/entities/posts.entities";
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
       username: "postgres",
       password: "postgres",
       database: "postgres",
-      entities: [], // 생성할 db 모델이 들어감
+      entities: [PostsModel], // 생성할 db 모델이 들어감
       synchronize: true,
       // nestjs typeorm 코드와 db 동기화 (개발환경에서는 true, production 시 false)
     }),
